@@ -1,0 +1,29 @@
+apiVersion: helm.argoproj.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: prometheus
+spec:
+  chart:
+    spec:
+      chart: loki/loki
+      version: ""
+      sourceRef:
+        kind: HelmRepository
+        name: loki
+        context: prometheus
+  values: |
+    loki:
+      replicas: 1
+      service:
+        type: ClusterIP
+        ports:
+        - name: web
+          port: 3100
+    promtail:
+      replicas: 1
+      service:
+        type: ClusterIP
+        ports:
+        - name: web
+          port: 9090

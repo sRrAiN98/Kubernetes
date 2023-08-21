@@ -1,0 +1,24 @@
+apiVersion: helm.argoproj.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: nginx-ingress
+  namespace: nginx-ingress
+spec:
+  chart:
+    spec:
+      chart: nginx-ingress-controller
+      version: ""
+      sourceRef:
+        kind: HelmRepository
+        name: nnginx-ingress
+        context: nginx-ingress
+  values: |
+    nginx:
+      replicas: 1
+      service:
+        type: LoadBalancer
+        ports:
+          - name: http
+            port: 80
+          - name: https
+            port: 443

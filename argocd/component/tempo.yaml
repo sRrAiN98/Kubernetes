@@ -1,0 +1,22 @@
+apiVersion: helm.argoproj.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: tempo
+  namespace: tempo
+spec:
+  chart:
+    spec:
+      chart: tempo/tempo
+      version: ""
+      sourceRef:
+        kind: HelmRepository
+        name: tempo
+        context: prometheus
+  values: |
+    tempo:
+      replicas: 1
+        service:
+          type: ClusterIP
+          ports:
+          - name: web
+            port: 3100

@@ -1,0 +1,24 @@
+apiVersion: helm.argoproj.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: istio
+  namespace: istio
+spec:
+  chart:
+    spec:
+      chart: istio/istio
+      version: ""
+      sourceRef:
+        kind: HelmRepository
+        name: istio-operator
+        context: istio
+  values: |
+    profile: default
+    components:
+      pilot:
+        enabled: true
+      istiod:
+        enabled: true
+      egressGateways:
+      - name: default
+        enabled: true

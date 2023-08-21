@@ -1,0 +1,105 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: appofapp-demo
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/srrain98/argocd
+    path: .
+    targetRevision: master
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    manual:
+      allowEmpty: false
+  triggers:
+    - type: manual
+      source:
+        path: istio/istio-operator.yaml
+  templates:
+  - name: istio-operator
+    helm:
+      chart: istio/istio
+      values:
+        profile: default
+        components:
+          pilot:
+            enabled: true
+          istiod:
+            enabled: true
+          egressGateways:
+          - name: default
+            enabled: true
+  - name: prometheus
+    helm:
+      chart: prometheus-operator/prometheus
+      values:
+        prometheus:
+          replicas: 1
+          service:
+            type: ClusterIP
+            ports:
+            - name: web
+              port: 9090
+          alerting:
+            receiver:
+            - name: email
+              email:
+                to: ['admin@example.com']
+                bcc: ['dev@example.com']
+        prometheusRules:
+          - name: istio-rules
+            rules:
+            - alert: IstioPilotNotReady
+              expr: up{job="istio-pilot"} == 0
+              for: 1m
+              labels:
+                alertname: IstioPilotNotReady
+                severity: critical
+  - name: loki
+    helm:
+      chart: loki/loki
+      values:
+        loki:
+          replicas: 1
+          service:
+            type: ClusterIP
+            ports:
+            - name: web
+              port: 3100
+        promtail:
+          replicas: 1
+          service:
+            type: ClusterIP
+            ports:
+            - name: web
+              port: 9090
+  - name: tempo
+    helm:
+      chart: tempo/tempo
+      values:
+        tempo:
+          replicas: 1
+          service:
+            type: ClusterIP
+            ports:
+            - name: web
+              port: 3100
+  - name: nginx-ingress
+    helm:
+      chart: nginx-ingress/nginx-ingress
+      values:
+        nginx:
+          replicas: 1
+          service:
+            type: LoadBalancer
+            ports:
+            - name: http
+              port: 80
+            - name: https
+              port: 443

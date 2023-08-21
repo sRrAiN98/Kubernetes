@@ -1,0 +1,37 @@
+apiVersion: helm.argoproj.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: prometheus
+spec:
+  chart:
+    spec:
+      chart: prometheus
+      version: ""
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-operator/prometheus
+        context: prometheus
+  values: |
+    prometheus:
+      replicas: 1
+      service:
+        type: ClusterIP
+        ports:
+        - name: web
+          port: 9090
+      alerting:
+        receiver:
+        - name: email
+          email:
+            to: ['admin@example.com']
+            bcc: ['dev@example.com']
+    prometheusRules:
+      - name: istio-rules
+        rules:
+        - alert: IstioPilotNotReady
+          expr: up{job="istio-pilot"} == 0
+          for: 1m
+          labels:
+            alertname: IstioPilotNotReady
+            severity: critical
