@@ -1,37 +1,46 @@
-apiVersion: helm.argoproj.io/v1alpha1
-kind: HelmRelease
+kind: Application
 metadata:
-  name: prometheus
-  namespace: prometheus
+  name: nginx-ingress
+  namespace: argocd
 spec:
-  chart:
-    spec:
-      chart: prometheus
-      version: ""
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-operator/prometheus
-        context: prometheus
-  values: |
-    prometheus:
-      replicas: 1
-      service:
-        type: ClusterIP
-        ports:
-        - name: web
-          port: 9090
-      alerting:
-        receiver:
-        - name: email
-          email:
-            to: ['admin@example.com']
-            bcc: ['dev@example.com']
-    prometheusRules:
-      - name: istio-rules
-        rules:
-        - alert: IstioPilotNotReady
-          expr: up{job="istio-pilot"} == 0
-          for: 1m
-          labels:
-            alertname: IstioPilotNotReady
-            severity: critical
+  destination:
+    namespace: demo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus
+    targetRevision: 23.4.0
+    helm:
+      parameters: {}
+      releaseName: nginx-ingress
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+      #  values: |
+      #    prometheus:
+      #      replicas: 1
+      #      service:
+      #        type: ClusterIP
+      #        ports:
+      #        - name: web
+      #          port: 9090
+      #      alerting:
+      #        receiver:
+      #        - name: email
+      #          email:
+      #            to: ['admin@example.com']
+      #            bcc: ['dev@example.com']
+      #    prometheusRules:
+      #      - name: istio-rules
+      #        rules:
+      #        - alert: IstioPilotNotReady
+      #          expr: up{job="istio-pilot"} == 0
+      #          for: 1m
+      #          labels:
+      #            alertname: IstioPilotNotReady
+      #            severity: critical

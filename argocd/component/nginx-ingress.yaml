@@ -1,24 +1,25 @@
-apiVersion: helm.argoproj.io/v1alpha1
-kind: HelmRelease
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: nginx-ingress
   namespace: argocd
 spec:
-  chart:
-    spec:
-      chart: nginx-ingress-controller
-      version: ""
-      sourceRef:
-        kind: HelmRepository
-        name: nnginx-ingress
-        context: nginx-ingress
-  values: |
-    nginx:
-      replicas: 1
-      service:
-        type: LoadBalancer
-        ports:
-          - name: http
-            port: 80
-          - name: https
-            port: 443
+  destination:
+    namespace: demo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://helm.nginx.com/stable
+    chart: nginx-ingress
+    targetRevision: 0.18.1
+    helm:
+      parameters:
+      - name: controller.service.type
+        value: LoadBalancer
+      releaseName: nginx-ingress
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

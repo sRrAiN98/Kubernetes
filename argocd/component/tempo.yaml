@@ -1,22 +1,24 @@
-apiVersion: helm.argoproj.io/v1alpha1
-kind: HelmRelease
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: tempo
-  namespace: tempo
+  namespace: argocd
 spec:
-  chart:
-    spec:
-      chart: tempo/tempo
-      version: ""
-      sourceRef:
-        kind: HelmRepository
-        name: tempo
-        context: prometheus
-  values: |
-    tempo:
-      replicas: 1
-        service:
-          type: ClusterIP
-          ports:
-          - name: web
-            port: 3100
+  destination:
+    namespace: demo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: tempo
+    targetRevision: 1.5.0
+    helm:
+      parameters: {}
+      releaseName: tempo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

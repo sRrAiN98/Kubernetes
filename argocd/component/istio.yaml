@@ -1,24 +1,37 @@
-apiVersion: helm.argoproj.io/v1alpha1
-kind: HelmRelease
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
-  name: istio
-  namespace: istio
+  name: nginx-ingress
+  namespace: argocd
 spec:
-  chart:
-    spec:
-      chart: istio/istio
-      version: ""
-      sourceRef:
-        kind: HelmRepository
-        name: istio-operator
-        context: istio
-  values: |
-    profile: default
-    components:
-      pilot:
-        enabled: true
-      istiod:
-        enabled: true
-      egressGateways:
-      - name: default
-        enabled: true
+  destination:
+    namespace: demo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: 1.19.0-beta.1
+    helm:
+      parameters: {}
+      releaseName: istio
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+
+
+      #  values: 
+      #    profile: default
+      #    components:
+      #      pilot:
+      #        enabled: true
+      #      istiod:
+      #        enabled: true
+      #      egressGateways:
+      #      - name: default
+      #        enabled: true

@@ -1,29 +1,25 @@
-apiVersion: helm.argoproj.io/v1alpha1
-kind: HelmRelease
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: loki
-  namespace: prometheus
+  namespace: argocd
 spec:
-  chart:
-    spec:
-      chart: loki/loki
-      version: ""
-      sourceRef:
-        kind: HelmRepository
-        name: loki
-        context: prometheus
-  values: |
-    loki:
-      replicas: 1
-      service:
-        type: ClusterIP
-        ports:
-        - name: web
-          port: 3100
-    promtail:
-      replicas: 1
-      service:
-        type: ClusterIP
-        ports:
-        - name: web
-          port: 9090
+  destination:
+    namespace: prom
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: loki
+    targetRevision: 5.14.15.14.1
+    helm:
+      parameters: {}
+      releaseName: loki
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+
