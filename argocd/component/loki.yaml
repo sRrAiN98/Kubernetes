@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: prom
+    namespace: prometheus
     server: https://kubernetes.default.svc
   project: default
   source:
