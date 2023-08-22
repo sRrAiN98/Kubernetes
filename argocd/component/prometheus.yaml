@@ -1,6 +1,6 @@
 kind: Application
 metadata:
-  name: nginx-ingress
+  name: prometheus
   namespace: argocd
 spec:
   destination:
