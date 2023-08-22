@@ -13,7 +13,7 @@ spec:
     chart: prometheus
     targetRevision: 23.4.0
     helm:
-      parameters: {}
+       
       releaseName: nginx-ingress
   syncPolicy:
     automated:

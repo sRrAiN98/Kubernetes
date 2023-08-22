@@ -14,7 +14,7 @@ spec:
     chart: tempo
     targetRevision: 1.5.0
     helm:
-      parameters: {}
+       
       releaseName: tempo
   syncPolicy:
     automated:

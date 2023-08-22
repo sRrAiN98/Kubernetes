@@ -14,7 +14,7 @@ spec:
     chart: grafana
     targetRevision: 6.58.9
     helm:
-      parameters: {}
+       
       releaseName: grafana
   syncPolicy:
     automated:

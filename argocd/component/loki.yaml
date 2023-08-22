@@ -13,7 +13,7 @@ spec:
     chart: loki
     targetRevision: 5.14.15.14.1
     helm:
-      parameters: {}
+       
       releaseName: loki
   syncPolicy:
     automated:
