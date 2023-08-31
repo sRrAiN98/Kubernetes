@@ -1,6 +1,0 @@
-spec:
-  destination:
-    server: https://kubernetes.default.svc
-  source:
-    repoURL: http://git.didimdev.kro.kr/admin1/appofapps.git
-    targetRevision: HEAD
