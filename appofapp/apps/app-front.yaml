@@ -11,7 +11,7 @@ spec:
   
   source:
     repoURL: {{ .Values.spec.source.repoURL }}
-    path: charts/front
+    path: appofapp/charts/front
     targetRevision: {{ .Values.spec.source.targetRevision }}
   
   destination:

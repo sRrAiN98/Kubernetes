@@ -11,7 +11,7 @@ spec:
   project: default
   
   source:
-    repoURL: http://git.didimdev.kro.kr/admin1/appofapps.git
+    repoURL: https://github.com/sRrAiN98/Kubernetes.git
     targetRevision: HEAD
     path: apps
   
