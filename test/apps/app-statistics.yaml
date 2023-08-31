@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: statistics
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: default
+  
+  source:
+    repoURL: http://git.didimdev.kro.kr/admin1/appofapps.git
+    targetRevision: HEAD
+    path: charts/statistics
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: appofapps
+  
+  syncPolicy:
+    automated: 
+      prune: true 
+      selfHeal: true   
+    syncOptions:
+      - CreateNamespace=true
