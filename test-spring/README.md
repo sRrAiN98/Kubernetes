@@ -35,14 +35,17 @@ graph TD
 
 subgraph "sample-spring-microservices-kubernetes"
   gateway-service --> department-service
+  department-service--> mongodb
   gateway-service --> employee-service
   employee-service--> zipkin
+  employee-service--> mongodb
   gateway-service --> organization-service
   organization-service--> zipkin
+  organization-service--> mongodb
 end
 
 subgraph "admin-service"
-  k8s-monitor
+  monitor
 end
 ```
 
