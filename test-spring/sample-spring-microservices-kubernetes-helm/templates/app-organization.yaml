@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: organization
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: default
+  
+  source:
+    repoURL: https://gitlab.srrain.kro.kr/root/sample-spring-microservices-kubernete-helm.git
+    targetRevision: HEAD
+    path: charts/organization
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: springcloud
+  
+  syncPolicy:
+    automated: 
+      prune: true 
+      selfHeal: true   
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,45 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jarger
+  namespace: argocd
+spec:
+  destination:
+    namespace: springcloud
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: jaeger
+    helm:
+      valueFiles:
+      - values.yaml
+      values: |-
+        provisionDataStore:
+          cassandra: false
+        allInOne:
+          enabled: true
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts:
+              - spring3.srrain.kro.kr
+            labels:
+              app: jaeger
+            pathType: Prefix
+        storage:
+          type: none
+        agent:
+          enabled: false
+        collector:
+          enabled: false
+        query:
+          enabled: false
+    repoURL: https://jaegertracing.github.io/helm-charts
+    targetRevision: 0.71.14
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

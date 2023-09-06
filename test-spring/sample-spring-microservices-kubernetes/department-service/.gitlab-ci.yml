@@ -1,0 +1,64 @@
+stages:          # List of stages for jobs, and their order of execution 1
+  - build
+  - docker
+  - deploy
+
+maven-build:
+  image: maven:3.8.5-openjdk-17
+  stage: build
+  variables:
+    PACKAGE_EXTENSION: "jar" 
+    APP_NAME: "department-service"
+  artifacts:
+    paths:
+      - "./department-service/target/*.$PACKAGE_EXTENSION"
+      - "./department-service/**/target/*.$PACKAGE_EXTENSION"
+    expire_in: 1 week
+  cache:
+    key: $PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+      - .m2/repository
+  script: "mvn clean install -pl $APP_NAME -am -DskipTests"
+
+
+kaniko-docker:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  stage: docker
+  variables:
+    KANIKO_ARGS: ""
+    DOCKERFILE_PATH: "./department-service/Dockerfile"
+    NCP_REGISTRY: "dockerimage.kr.ncr.ntruss.com"
+    APP_NAME: "department"
+  script: 
+    - echo "{\"auths\":{\"$NCP_REGISTRY\":{\"auth\":\"$(echo -n ${NCP_ACCESS_KEY}:${NCP_SECRET_KEY} | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - cat /kaniko/.docker/config.json
+    - NEW_TAG=${CI_COMMIT_SHORT_SHA}-${CI_PIPELINE_ID}
+    - /kaniko/executor --context ${CI_PROJECT_DIR} --dockerfile ${DOCKERFILE_PATH} --destination ${NCP_REGISTRY}/${APP_NAME}:${NEW_TAG} $KANIKO_ARGS
+
+argocd-deploy:     
+  stage: deploy
+  image: bitnami/git:latest
+  variables:
+    HELM_URL: "gitlab.didimdev.kro.kr/root/sample-spring-microservices-kubernetes-helm.git"
+    HELM_DIRECTORY: "sample-spring-microservices-kubernetes-helm/charts/department"
+  script:
+    - |
+      git clone https://root:${GITLAB_TOKEN}@${HELM_URL} 
+      git log | sed -n 5p > ${HELM_DIRECTORY}/log.txt
+      cd ${HELM_DIRECTORY}
+
+    - |
+      git config --global user.email 'gitlab runner@example.com'
+      git config --global user.name 'gitlab runner'
+
+    - |
+      OLD_TAG=`cat values.yaml | grep -i "tag:\ " | awk 'NR == 1 {print $2}'`
+      NEW_TAG=${CI_COMMIT_SHORT_SHA}-${CI_PIPELINE_ID}
+      sed -i "s/${OLD_TAG}/${NEW_TAG}/g" values.yaml
+      LOG=`cat log.txt`
+      git add values.yaml 
+      git commit -m "$LOG" 
+      git push https://root:${GITLAB_TOKEN}@${HELM_URL}
+ 

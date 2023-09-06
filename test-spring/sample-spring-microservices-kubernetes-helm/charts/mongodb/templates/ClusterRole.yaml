@@ -1,0 +1,11 @@
+{{- if .Values.serviceAccount.create -}}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "mongodb.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["*"]
+    verbs: ["*"]
+{{- end }}

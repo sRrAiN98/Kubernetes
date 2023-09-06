@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: department
+#  cloud:
+#    loadbalancer:
+#      ribbon:
+#        enabled: false
+#    kubernetes:
+#      discovery:
+#        all-namespaces: true
+
+logging:
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+  level:
+    org.springframework.cloud.kubernetes: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

@@ -1,0 +1,108 @@
+# Default values for admin.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: dockerimage.kr.ncr.ntruss.com/admin
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ac079ea4-85
+
+imagePullSecrets: 
+  - name: ncp-imagepullsecret
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  name: SPRING_CLOUD_BOOTSTRAP_ENABLED
+  value: "true"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "spring-cloud-kubernetes"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "gitlab-nginx"
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: spring1.didimdev.kro.kr
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secret:
+  enabled: false
+  name: admin-secret
+
+env:
+  SPRING_CLOUD_BOOTSTRAP_ENABLED: "true"
+  SPRING_CLOUD_KUBERNETES_SECRETS_ENABLEAPI: "true"
+
+configmap:
+  name: admin
+  data:
+    application.yml: |-
+      spring:
+        cloud:
+          kubernetes:
+            discovery:
+              all-namespaces: true
+              service-labels:
+                spring-boot: true

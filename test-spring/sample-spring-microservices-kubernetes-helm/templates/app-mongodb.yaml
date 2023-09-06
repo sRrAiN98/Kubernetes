@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mongodb-spring
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: default
+  
+  source:
+    repoURL: https://gitlab.srrain.kro.kr/root/sample-spring-microservices-kubernete-helm.git
+    targetRevision: HEAD
+    path: charts/mongodb
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: springcloud
+    
+  syncPolicy:
+    automated: 
+      prune: true 
+      selfHeal: true   
+    syncOptions:
+      - CreateNamespace=true

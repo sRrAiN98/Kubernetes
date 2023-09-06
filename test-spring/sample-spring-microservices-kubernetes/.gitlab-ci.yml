@@ -1,0 +1,60 @@
+stages:
+  - triggers
+
+trigger_admin-service:
+  stage: triggers
+  trigger:
+    include: admin-service/.gitlab-ci.yml
+  rules:
+    - changes:
+        - admin-service/**
+        - admin-service/**/*
+
+trigger_department-service:
+  stage: triggers
+  trigger:
+    include: department-service/.gitlab-ci.yml
+  rules:
+    - changes:
+        - department-service/**
+        - department-service/**/*
+
+
+trigger_employee-service:
+  stage: triggers
+  trigger:
+    include: employee-service/.gitlab-ci.yml
+  rules:
+    - changes:
+        - employee-service/**
+        - employee-service/**/*
+
+
+trigger_gateway-service:
+  stage: triggers
+  trigger:
+    include: gateway-service/.gitlab-ci.yml
+  rules:
+    - changes:
+        - gateway-service/**
+        - gateway-service/**/*
+
+
+trigger_mongodb:
+  stage: triggers
+  trigger:
+    include: mongodb/.gitlab-ci.yml
+  rules:
+    - changes:
+        - mongodb/**
+        - mongodb/**/*
+
+
+trigger_organization-service:
+  stage: triggers
+  trigger:
+    include: organization-service/.gitlab-ci.yml
+  rules:
+    - changes:
+        - organization-service/**
+        - organization-service/**/*
