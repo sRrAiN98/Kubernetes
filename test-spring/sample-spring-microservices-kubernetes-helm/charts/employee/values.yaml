@@ -49,7 +49,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: spring3.didimdev.kro.kr
+    - host: spring3.srrain98.kro.kr
       paths:
         - path: /
           pathType: ImplementationSpecific

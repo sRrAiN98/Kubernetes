@@ -19,7 +19,7 @@ spec:
             enabled: true
             ingressClassName: gitlab-nginx
             hosts:
-              - spring3.didimdev.kro.kr
+              - spring3.srrain98.kro.kr
             labels:
               app: jaeger
             pathType: Prefix

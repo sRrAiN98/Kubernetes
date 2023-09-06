@@ -51,7 +51,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     #- host: microservices.info
-    - host: spring2.didimdev.kro.kr
+    - host: spring2.srrain98.kro.kr
       paths:
         - path: /
           pathType: Prefix

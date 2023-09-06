@@ -41,7 +41,7 @@ argocd-deploy:
   stage: deploy
   image: bitnami/git:latest
   variables:
-    HELM_URL: "gitlab.didimdev.kro.kr/root/sample-spring-microservices-kubernetes-helm.git"
+    HELM_URL: "gitlab.srrain98.kro.kr/root/sample-spring-microservices-kubernetes-helm.git"
     HELM_DIRECTORY: "sample-spring-microservices-kubernetes-helm/charts/admin"
   script:
     - |
