@@ -1,3 +1,51 @@
+# 구조
+```mermaid
+graph TD
+
+subgraph "sample-spring-microservices-kubernetes"
+  .gitlab-ci.yml --> admin-service
+  .gitlab-ci.yml --> department-service
+  .gitlab-ci.yml --> employee-service
+  .gitlab-ci.yml --> gateway-service
+  .gitlab-ci.yml --> organization-service
+end
+
+subgraph "admin-service"
+  admin-service/.gitlab-ci.yml
+end
+
+subgraph "department-service"
+  department-service/.gitlab-ci.yml
+end
+
+subgraph "employee-service"
+  employee-service/.gitlab-ci.yml
+end
+
+subgraph "gateway-service"
+  gateway-service/.gitlab-ci.yml
+end
+
+subgraph "organization-service"
+  organization-service/.gitlab-ci.yml
+end
+```
+```mermaid
+graph TD
+
+subgraph "sample-spring-microservices-kubernetes"
+  gateway-service --> department-service
+  gateway-service --> employee-service
+  employee-service--> zipkin
+  gateway-service --> organization-service
+  organization-service--> zipkin
+end
+
+subgraph "admin-service"
+  k8s-monitor
+end
+```
+
 # 설명
 - 공개되어있는 github의 소스를 가지고 쿠버네티스에 올리는 것 테스트
 - 각 폴더마다 최상위 디렉토리 기준으로 테스트하였음.
