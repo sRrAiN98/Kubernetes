@@ -83,7 +83,7 @@ end
 ```
 spring.zipkin.base-url=http://zipkin/ 로 기재 시 url이 적용되지 않음
 management.zipkin.tracing.endpoint=http://jarger-jaeger-collector:9411/api/v2/spans   로 바뀐 문법으로 사용
-(zipkin이 무거워서 allinone jarger 사용  *서로 호환되는 오픈 소스*)
+(zipkin이 무거워서 allinone jaeger 사용  *서로 호환되는 오픈 소스*)
 ```
 
 - env 설정:
