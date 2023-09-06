@@ -48,6 +48,26 @@ subgraph "admin-service"
   monitor
 end
 ```
+이 기존 온프레미스 소스 였던 것처럼 보이고
+```mermaid
+graph TD
+
+subgraph "sample-spring-microservices-kubernetes"
+  ingress --> department-service
+  department-service--> mongodb
+  ingress --> employee-service
+  employee-service--> zipkin
+  employee-service--> mongodb
+  ingress --> organization-service
+  organization-service--> zipkin
+  organization-service--> mongodb
+end
+
+subgraph "admin-service"
+  monitor
+end
+```
+ingress가 gateway를 대체하여 사용된 것처럼 보임
 
 # 설명
 - 공개되어있는 github의 소스를 가지고 쿠버네티스에 올리는 것 테스트
