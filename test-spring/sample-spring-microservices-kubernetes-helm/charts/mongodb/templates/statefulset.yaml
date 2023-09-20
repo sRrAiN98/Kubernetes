@@ -8,6 +8,7 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  serviceName: {{ include "mongodb.fullname" . }}
   selector:
     matchLabels:
       {{- include "mongodb.selectorLabels" . | nindent 6 }}
