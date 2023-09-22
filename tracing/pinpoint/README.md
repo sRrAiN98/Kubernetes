@@ -17,7 +17,7 @@ pinpoint-root.config에 pinpoint server ip정보를 기재한다.
 env:
   - name: JAVA_TOOL_OPTIONS
     value: >-
-        -Dprofiler.transport.grpc.collector.ip=192.168.60.102
+        -Dprofiler.transport.grpc.collector.ip=pinpoint-collector.pinpoint.svc.cluster.local ## kube coredns
         -Dpinpoint.profiler.profiles.active: dev
         -Dprofiler.sampling.percent.sampling-rate=20
 
