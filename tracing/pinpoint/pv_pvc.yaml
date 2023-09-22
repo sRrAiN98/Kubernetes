@@ -1,0 +1,29 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pinpoint-agent
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/hostpath"
+    # 분명 hostpath로 된다고 쿠버네티스 홈페이지에 적혀있는데 적용이 안 되어서
+    # pv 생성 후 pod에 mount하여 kubectl cp로 직접 집어 넣었음
+
+---
+# claim 같은 경우 namespace에 의존성이 있기 때문에 kubectl apply -f pv_pvc.yaml -n {추가할 네임스페이스} 와 같이 추가해줘야함
+# gitops로 적용한다고 하면 미리 pinpoint용 pv chart 만들어서 배포하면 편할 것으로 보임
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pinpoint-agent-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+   requests:
+    storage: 5Gi

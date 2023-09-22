@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: '10'
+  generation: 9
+  labels:
+    app.kubernetes.io/instance: banner
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: banner
+    app.kubernetes.io/version: 1.16.0
+    argocd.argoproj.io/instance: banner
+    helm.sh/chart: banner-0.1.0
+  name: banner
+  namespace: appofapps
+  resourceVersion: '1333730'
+  uid: cace3b3b-c830-48be-ba48-c1e285e1a230
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: banner
+      app.kubernetes.io/name: banner
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: banner
+        app.kubernetes.io/name: banner
+    spec:
+      containers:
+      ## < pinpoint env 추가
+        - env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -javaagent:/pinpoint/pinpoint-bootstrap-2.5.2.jar
+                -Dpinpoint.config=/pinpoint/pinpoint-root.config
+                -Dpinpoint.applicationName=banner -Dpinpoint.agentName=banner
+                -Dpinpoint.container
+      ##   >
+          image: 'dockerimage.kr.ncr.ntruss.com/banner:afa4fd3b-110'
+          imagePullPolicy: IfNotPresent
+          name: banner
+          ports:
+            - containerPort: 9090
+              name: http
+              protocol: TCP
+          resources: {}
+          securityContext: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          ## < pinpoint 디렉토리 마운트
+          volumeMounts:
+            - mountPath: /pinpoint
+              name: pinpoint-agent
+          ## >
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: ncp-imagepullsecret
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: banner
+      serviceAccountName: banner
+      terminationGracePeriodSeconds: 30
+      ## < pv 불러오기
+      volumes:
+        - name: pinpoint-agent
+          persistentVolumeClaim:
+            claimName: pinpoint-agent-pvc
+      ## >
