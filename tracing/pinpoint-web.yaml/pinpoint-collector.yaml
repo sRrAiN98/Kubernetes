@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinpoint-collector
+  labels:
+    app: pinpoint-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinpoint-collector
+  template:
+    metadata:
+      labels:
+        app: pinpoint-collector
+    spec:
+      containers:
+      - name: pinpoint-collector
+        image: docker.io/pinpointdocker/pinpoint-collector:2.5.2
+        env:
+        - name: TZ
+          value: Asia/Seoul
+        - name: PINPOINT_ZOOKEEPER_ADDRESS
+          value: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-collector
+  labels:
+    app: pinpoint-collector
+spec:
+  ports:
+  - name: http
+    port: 8081
+  - name: grpc-base
+    port: 9991
+  - name: grpc-stat
+    port: 9992
+  - name: grpc-span
+    port: 9993
+  - name: thrift-base
+    port: 9994
+  - name: thrift-stat
+    port: 9995
+  - name: thrift-span
+    port: 9996
+  selector:
+    app: pinpoint-collector

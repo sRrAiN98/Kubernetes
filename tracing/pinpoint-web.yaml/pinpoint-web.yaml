@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinpoint-web
+  labels:
+    app: pinpoint-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinpoint-web
+  template:
+    metadata:
+      labels:
+        app: pinpoint-web
+    spec:
+      containers:
+      - name: pinpoint-web
+        image: docker.io/pinpointdocker/pinpoint-web:2.5.2
+        env:
+        - name: TZ
+          value: Asia/Seoul
+        - name: PINPOINT_ZOOKEEPER_ADDRESS
+          value: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-web
+  labels:
+    app: pinpoint-web
+spec:
+  ports:
+  - name: http
+    port: 8080
+  selector:
+    app: pinpoint-web

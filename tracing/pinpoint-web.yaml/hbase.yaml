@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hbase
+  labels:
+    app: hbase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hbase
+  serviceName: hbase
+  template:
+    metadata:
+      labels:
+        app: hbase
+    spec:
+      containers:
+      - name: hbase
+        image: docker.io/pinpointdocker/pinpoint-hbase:2.5.2
+        volumeMounts:
+        - name: config
+          mountPath: /opt/hbase/hbase-1.2.6/conf/hbase-site.xml
+          subPath: hbase-site.xml
+      volumes:
+      - name: config
+        configMap:
+          name: hbase
+          items:
+          - key: hbase-site.xml
+            path: hbase-site.xml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hbase
+  labels:
+    app: hbase
+spec:
+  ports:
+  - name: master
+    port: 16000
+  - name: regionserver
+    port: 16201
+  selector:
+    app: hbase
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hbase
+  labels:
+    app: hbase
+data:
+  hbase-site.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+        <name>hbase.cluster.distributed</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>hbase.rootdir</name>
+        <value>file:///home/pinpoint/hbase</value>
+      </property>
+      <property>
+        <name>hbase.master.port</name>
+        <value>16000</value>
+      </property>
+      <property>
+        <name>hbase.regionserver.port</name>
+        <value>16201</value>
+      </property>
+      <property>
+        <name>hbase.zookeeper.property.clientPort</name>
+        <value>2181</value>
+      </property>
+      <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>zookeeper</value>
+      </property>
+      <property>
+        <name>zookeeper.znode.parent</name>
+        <value>/hbase</value>
+      </property>
+    </configuration>
