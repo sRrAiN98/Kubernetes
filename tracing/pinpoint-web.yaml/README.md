@@ -2,6 +2,8 @@
 yaml은 helm chart가 artifacthub에 없는 관계로 github에 어떤 분이 올려놓으신 yaml파일을 사용했다.
 출처: https://github.com/pinpoint-apm/pinpoint-kubernetes.git
 
+https://user-images.githubusercontent.com/89556955/269805750-69ad2424-1dc3-402a-8f3a-026a7887e03e.png
+
 java실행할때 javaagent 인수를 추가하여 apm 에이전트가 실행되는 방식이고
 JAVA OPTS는 env를 활용하여 git과 argo에서 관리하기 쉽게 구성하였다.
 
@@ -23,6 +25,9 @@ env:
         -Dpinpoint.profiler.profiles.active: dev
         -Dprofiler.sampling.percent.sampling-rate=20
 ```
+
+![정상적으로 실행되면 tomcat 이전에 agent가 불러와진다](image.png)
+
 
 1. pv, pvc 생성
 2. pv에 pinpoint를 kubectl cp로 추가
