@@ -1,4 +1,5 @@
-# yaml은 helm chart가 artifacthub에 없는 관계로 github에 어떤 분이 올려놓으신 yaml파일을 사용했다.
+# pinpoint - kubernetes
+yaml은 helm chart가 artifacthub에 없는 관계로 github에 어떤 분이 올려놓으신 yaml파일을 사용했다.
 출처: https://github.com/pinpoint-apm/pinpoint-kubernetes.git
 
 java실행할때 javaagent 인수를 추가하여 apm 에이전트가 실행되는 방식이고
@@ -14,13 +15,14 @@ kubectl apply -f pv_pvc.yaml -n appofapps
 pinpoint-root.config에 pinpoint server ip정보를 기재한다.
 
 혹은 JAVA OPTS에 오버라이드하여 적용할 수 있다.
+```
 env:
   - name: JAVA_TOOL_OPTIONS
     value: >-
         -Dprofiler.transport.grpc.collector.ip=pinpoint-collector.pinpoint.svc.cluster.local ## kube coredns
         -Dpinpoint.profiler.profiles.active: dev
         -Dprofiler.sampling.percent.sampling-rate=20
-
+```
 
 1. pv, pvc 생성
 2. pv에 pinpoint를 kubectl cp로 추가
