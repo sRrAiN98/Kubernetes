@@ -4,6 +4,7 @@
 2.apps 에서 argocd에서 app create 할 때 나오는 yaml파일을 넣어두고
 3.application.yaml가 해당 yaml파일을 create 해주는 것과 동일한 역할을 함  
 
+![Alt text](image.png)
 
 - 근데 문제가 있음...
   
