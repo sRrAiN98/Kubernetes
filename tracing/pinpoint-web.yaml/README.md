@@ -1,6 +1,6 @@
 # pinpoint - kubernetes
 yaml은 helm chart가 artifacthub에 없는 관계로 github에 어떤 분이 올려놓으신 yaml파일을 사용했다.
-출처: https://github.com/pinpoint-apm/pinpoint-kubernetes.git
+출처: https://github.com/veverita7/pinpoint-kubernetes.git
 
 ![핀포인트 실행](image-1.png)
 
