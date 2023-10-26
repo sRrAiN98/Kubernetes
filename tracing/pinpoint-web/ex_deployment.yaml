@@ -45,7 +45,7 @@ spec:
                 -Dpinpoint.applicationName=banner -Dpinpoint.agentName=banner
                 -Dpinpoint.container
       ##   >
-          image: 'dockerimage.kr.ncr.ntruss.com/banner:afa4fd3b-110'
+          image: 'tkavna123/banner:5'
           imagePullPolicy: IfNotPresent
           name: banner
           ports:
