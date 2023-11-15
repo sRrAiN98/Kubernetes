@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hcxapi
+  namespace: argocd
+  # finalizers:
+  #   - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: default
+  
+  source:
+    repoURL: {{ .Values.spec.source.repoURL }}
+    path: hcxapi
+    targetRevision: {{ .Values.spec.source.targetRevision }}
+  
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: api
+  
+  syncPolicy:
+    automated: 
+      prune: false
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true

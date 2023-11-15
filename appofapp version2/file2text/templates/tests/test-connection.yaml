@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "file2text.fullname" . }}-test-connection"
+  labels:
+    {{- include "file2text.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "file2text.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
