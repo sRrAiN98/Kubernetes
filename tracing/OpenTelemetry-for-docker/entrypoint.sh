@@ -6,4 +6,4 @@ opentelemetry-instrument \
     --exporter_jaeger_grpc_insecure true \
     uvicorn main:app --host=0.0.0.0 --port 8000
     
-#마지막 줄은 쓰고 싶은 명령어 그대로 쓰면 됨.
+#마지막 줄은 쓰고싶은 명령어 그대로 쓰면
