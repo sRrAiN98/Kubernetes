@@ -11,13 +11,13 @@ spec:
   project: default
   
   source:
-    repoURL: https://gitlab-ai.didim365.com/jaehee/helm_charts.git
+    repoURL: https://github.com/sRrAiN98/Kubernetes.git
     targetRevision: main
-    path: apps
+    path: tracing/OpenTelemetry-for-docker/helm
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: appofapps
+    namespace: test
   
   syncPolicy:
     automated: 
