@@ -11,7 +11,7 @@ image:
   tag: latest
 
 imagePullSecrets: 
-  - name: ncp-imagepullsecret
+  - name: imagepullsecret
 nameOverride: ""
 fullnameOverride: ""
 
@@ -85,7 +85,7 @@ affinity: {}
 
 dockersecret:
   enabled: true
-  name: ncp-imagepullsecret
+  name: imagepullsecret
 
 secret:
   enabled: true

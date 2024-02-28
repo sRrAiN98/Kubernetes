@@ -11,7 +11,7 @@ image:
   tag: 1d51e723-83
 
 imagePullSecrets: 
-  - name: ncp-imagepullsecret
+  - name: imagepullsecret
 nameOverride: ""
 fullnameOverride: ""
 

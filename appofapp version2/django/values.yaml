@@ -11,7 +11,7 @@ image:
   tag: b99d4e2a-30
 
 imagePullSecrets: 
-  - name: ncp-imagepullsecret
+  - name: imagepullsecret
 nameOverride: ""
 fullnameOverride: ""
 
@@ -51,7 +51,7 @@ ingress:
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
     #nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: ai.didim365.com
+    - host: django.srrain.kro.kr
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -59,8 +59,8 @@ ingress:
         #   pathType: Prefix
   tls: 
   - hosts:
-    - ai.didim365.com
-    secretName: aididim365com
+    - django.srrain.kro.kr
+    secretName: django-tls
 
 
 resources:
@@ -101,7 +101,7 @@ affinity:
 
 dockersecret:
   enabled: false
-  name: ncp-imagepullsecret
+  name: imagepullsecret
 
 env:
   TZ: Asia/Seoul
