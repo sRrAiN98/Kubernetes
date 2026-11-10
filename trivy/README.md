@@ -23,7 +23,7 @@ docker:
   stage: docker
   variables:
     DOCKERFILE_PATH: "./Dockerfile"
-    CI_REGISTRY: "docker-image.kr.ncr.ntruss.com"
+    CI_REGISTRY: "cr.example.com"
     APP_NAME: "test"
     TRIVY_VERSION: "0.47.0"
   before_script: # docker.sock 로딩 대기

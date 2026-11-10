@@ -52,12 +52,12 @@ extraEnv: |
 
 #여기는 dag를 git에 물리기 위해서 git id/pw 적는 공간
 #GIT_SYNC_USERNAME: #YWlyZmxvdw== / airflow
-#GIT_SYNC_PASSWORD: Z2xwYXQtanpOVGh4a0VkUDJZRnZHektnc0I= / glpat으로 시작하는 유저의 git 토큰 
+#GIT_SYNC_PASSWORD: <BASE64_ENCODED_GITLAB_TOKEN> / glpat으로 시작하는 유저의 git 토큰 
 extraSecrets:
   'git-credentials':
     data: |
       GIT_SYNC_USERNAME: YWlyZmxvdw==
-      GIT_SYNC_PASSWORD: Z2xwYXQtckh2basdasdasdasdA=
+      GIT_SYNC_PASSWORD: <BASE64_ENCODED_GITLAB_TOKEN>
 
 #naver cloud의 ReadWriteOnce만 지원하는 관계로 NAS 붙여보다가 실패해서 그냥 False로 설정
 dags:
@@ -68,7 +68,7 @@ dags:
 ##dag에 물릴 git 생성해서 url 기입
   gitSync:
     enabled: true
-    repo: https://gitlab.srrain.kro.kr/srrain98/airflow.git
+    repo: https://gitlab.example.com/srrain98/airflow.git
     branch: main
     rev: HEAD
     depth: 1
@@ -93,7 +93,7 @@ webserver:
     enabled: true
     role: Admin
     username: admin
-    email: wkdwogml159@naver.com
+    email: admin@example.com
     firstName: admin
     lastName: user
     password: qwe123
@@ -102,7 +102,7 @@ webserver:
 ingress:
   web:
     enabled: true
-    host: airflow.srrain.kro.kr
+    host: airflow.example.com
     annotations: 
       cert-manager.io/issuer: letsencrypt-prod
     ingressClassName: nginx
@@ -125,7 +125,7 @@ registry:
   connection:
     user: {삭제}
     pass: {삭제}
-    host: docker-image.kr.ncr.ntruss.com
+    host: cr.example.com
 ```
 
 ### argocd로 설치하는 방법
@@ -181,7 +181,7 @@ extraSecrets:
 
 ![Untitled](airflow_img/Untitled%209.png)
 
-Z2xwYXQtckh2b0F4OW5Bcm9kRkhCOVNzeVA=
+<BASE64_ENCODED_GITLAB_TOKEN>
 ![Untitled](airflow_img/Untitled%2010.png)
 
 ![alt text](airflow_img/image.png)

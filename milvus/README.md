@@ -128,7 +128,7 @@ pulsar:
        ## cert-manager.io/issuer: letsencrypt-prod
       tls: []
       ## - secretName: ""
-      hostname: "grafana.srrain.kro.kr"
+      hostname: "grafana.example.com"
       path: /
       port: 3000
 
@@ -150,10 +150,10 @@ attu:
     annotations:
       cert-manager.io/issuer: letsencrypt-prod
     hosts:
-      - milvus-attu.srrain.kro.kr
+      - milvus-attu.example.com
     tls:
     - hosts:
-      - milvus-attu.srrain.kro.kr
+      - milvus-attu.example.com
       secretName: milvus-attu
 
 #ingress 활성화
@@ -167,12 +167,12 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   labels: {}
   rules:
-    - host: "milvus.srrain.kro.kr"
+    - host: "milvus.example.com"
       path: "/"
       pathType: "Prefix"
   tls:
   - hosts:
-    - milvus.srrain.kro.kr
+    - milvus.example.com
     secretName: milvus
 
 EOF
@@ -227,10 +227,10 @@ EOF
         annotations:
           cert-manager.io/issuer: letsencrypt-prod
         hosts:
-          - milvus-attu.srrain.kro.kr
+          - milvus-attu.example.com
         tls:
         - hosts:
-          - milvus-attu.srrain.kro.kr
+          - milvus-attu.example.com
           secretName: milvus-attu
     
     #ingress 활성화
@@ -244,12 +244,12 @@ EOF
         nginx.ingress.kubernetes.io/ssl-redirect: "true"
       labels: {}
       rules:
-        - host: "milvus.srrain.kro.kr"
+        - host: "milvus.example.com"
           path: "/"
           pathType: "Prefix"
       tls:
       - hosts:
-        - milvus.srrain.kro.kr
+        - milvus.example.com
         secretName: milvus
     
     EOF
@@ -269,7 +269,7 @@ helm upgrade --install milvus . -f custom.yaml -n milvus --create-namespace
 
 ## argoCD로 배포하기
 
-- cluster 모드 url: srrain.kro.kr
+- cluster 모드 url: example.com
     
     ```yaml
     cluster:
@@ -390,7 +390,7 @@ helm upgrade --install milvus . -f custom.yaml -n milvus --create-namespace
            ## cert-manager.io/issuer: letsencrypt-prod
           tls: []
           ## - secretName: ""
-          hostname: "grafana.srrain.kro.kr"
+          hostname: "grafana.example.com"
           path: /
           port: 3000
     
@@ -410,10 +410,10 @@ helm upgrade --install milvus . -f custom.yaml -n milvus --create-namespace
         annotations:
           cert-manager.io/issuer: letsencrypt-prod
         hosts:
-          - milvus-attu.srrain.kro.kr
+          - milvus-attu.example.com
         tls:
         - hosts:
-          - milvus-attu.srrain.kro.kr
+          - milvus-attu.example.com
           secretName: milvus-attu
     
     ingress:
@@ -426,12 +426,12 @@ helm upgrade --install milvus . -f custom.yaml -n milvus --create-namespace
         nginx.ingress.kubernetes.io/ssl-redirect: "true"
       labels: {}
       rules:
-        - host: "miluvs.srrain.kro.kr"
+        - host: "milvus.example.com"
           path: "/"
           pathType: "Prefix"
       tls:
       - hosts:
-        - miluvs.srrain.kro.kr
+        - milvus.example.com
         secretName: milvus-ai
     
     ```
@@ -581,7 +581,7 @@ Milvus가 Proxy Protocol이 지원이 되지 않는 이슈로 간단하게 LoadB
            ## cert-manager.io/issuer: letsencrypt-prod
           tls: []
           ## - secretName: ""
-          hostname: "grafana.srrain.kro.kr"
+          hostname: "grafana.example.com"
           path: /
           port: 3000
     
@@ -599,10 +599,10 @@ Milvus가 Proxy Protocol이 지원이 되지 않는 이슈로 간단하게 LoadB
       ingress:
         enabled: true
         hosts:
-          - milvus-attu.srrain.kro.kr
+          - milvus-attu.example.com
         tls: []
         # - hosts:
-        #   - milvus-attu.srrain.kro.kr
+        #   - milvus-attu.example.com
         #   secretName: milvus-attu
     
     ingress:
@@ -615,12 +615,12 @@ Milvus가 Proxy Protocol이 지원이 되지 않는 이슈로 간단하게 LoadB
         nginx.ingress.kubernetes.io/ssl-redirect: "true"
       labels: {}
       rules:
-        - host: "milvus.srrain.kro.kr"
+        - host: "milvus.example.com"
           path: "/"
           pathType: "Prefix"
       tls:
       - hosts:
-        - milvus.srrain.kro.kr
+        - milvus.example.com
         secretName: milvus-ai
     ```
     
@@ -676,7 +676,7 @@ argoCD에 Milvus가 배포된 것을 볼 수 있다.
     
     ```yaml
     milvus:
-      address: milvus.srrain.kro.kr
+      address: milvus.example.com
       port: 19530
       authorizationEnabled: true #로그인 기능 활성화 했는지에 따라서 true
       tlsMode: 0
@@ -770,7 +770,7 @@ rclone copy test:milvus-s3-backup new-test:milvus-s3-backup
 
 ```yaml
 milvus:
-  address: milvus.srrain.kro.kr #새로운 milvus url
+  address: milvus.example.com #새로운 milvus url
   port: 19530
   authorizationEnabled: true
   tlsMode: 0

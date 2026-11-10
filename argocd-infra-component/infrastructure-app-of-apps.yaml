@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/sRrAiN98/Kubernetes.git
-    path: argocd/component
+    path: argocd-infra-component/component
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc

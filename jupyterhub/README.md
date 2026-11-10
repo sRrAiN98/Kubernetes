@@ -40,7 +40,7 @@ singleuser:
     - display_name: "hyper clova X environment"
       description: "사설 라이브러리 pip install 이미지."
       kubespawner_override:
-        image: docker-image.kr.ncr.ntruss.com/juypter-image:0.6
+        image: cr.example.com/juypter-image:0.6
 
   #생성되는 유저마다 관리 설정 21600초 지나면 notebook 꺼지게 300초마다 체크
   extraFiles:
@@ -83,7 +83,7 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
   ingressClassName: nginx
   hosts: 
-    - jupyterhub.srrain.kro.kr
+    - jupyter.example.com
   tls: []
 
 # cull. 섹션은 그냥 유저가 삭제됨;;;
@@ -104,7 +104,7 @@ gitlab으로 인증받는 helm values.yaml
 imagePullSecret:
   create: true
   automaticReferenceInjection: true
-  registry: docker-image.kr.ncr.ntruss.com
+  registry: cr.example.com
   username: {액세스 키 삭제}
   password: {시크릿 키 삭제}
   email:
@@ -115,24 +115,24 @@ hub:
   config:
     Authenticator:
       admin_users:
-        - jaehee
+        - admin
       allow_all: true
     OAuthenticator:
       enable_auth_state: true
-      client_id: 7a1b367689c2464757eda446easdmklasmdkasmdl
-      client_secret: gloas-72eb2da15c4be6c080eaasdnasjndjasndajsk
-      oauth_callback_url: https://jupyter-dev.srrain.kro.kr/hub/oauth_callback
+      client_id: <YOUR_OAUTH_CLIENT_ID>
+      client_secret: <YOUR_OAUTH_CLIENT_SECRET>
+      oauth_callback_url: https://jupyter.example.com/hub/oauth_callback
       scope:
         - openid
         - profile
         - read_user
     GitLabOAuthenticator:
-      gitlab_host: https://gitlab.srrain.kro.kr
+      gitlab_host: https://gitlab.example.com
     JupyterHub:
       authenticator_class: oauthenticator.gitlab.GitLabOAuthenticator
   extraEnv:
     JUPYTERHUB_CRYPT_KEY: "$(openssl rand -hex 32)"
-    GITLAB_HOST: https://gitlab.srrain.kro.kr
+    GITLAB_HOST: https://gitlab.example.com
     # disable TLS verification for self-signed certificates
     OAUTH_TLS_VERIFY: "0"
   extraConfig:
@@ -166,13 +166,13 @@ singleuser:
   defaultUrl: "/lab"
   allowPrivilegeEscalation: true
   extraEnv:
-    GITLAB_HOST: gitlab.srrain.kro.kr 
+    GITLAB_HOST: gitlab.example.com 
   profileList:
     - display_name: "Free"
       description: "사설 라이브러리 cpu 0.5 ~ / 메모리 1G ~ "
       default: true
       kubespawner_override:
-        image: docker-image.kr.ncr.ntruss.com/juypter-image:0.10
+        image: cr.example.com/juypter-image:0.10
         cpu_limit: 
         cpu_guarantee: 0.5
         mem_limit: 
@@ -181,7 +181,7 @@ singleuser:
     - display_name: "Small"
       description: "사설 라이브러리 cpu 0.5 ~ 1 / 메모리 1G ~ 2G"
       kubespawner_override:
-        image: docker-image.kr.ncr.ntruss.com/juypter-image:0.10
+        image: cr.example.com/juypter-image:0.10
         cpu_limit: 1
         cpu_guarantee: 0.5
         mem_limit: 1G
@@ -190,7 +190,7 @@ singleuser:
     - display_name: "High"
       description: "사설 라이브러리 cpu 1 ~ 4 / 메모리 2G ~ 8G"
       kubespawner_override:
-        image: docker-image.kr.ncr.ntruss.com/juypter-image:0.10
+        image: cr.example.com/juypter-image:0.10
         cpu_limit: 4
         cpu_guarantee: 1
         mem_limit: 8G
@@ -230,22 +230,22 @@ ingress:
   annotations:
     cert-manager.io/issuer: letsencrypt-prod
   hosts:
-    - jupyter-dev.srrain.kro.kr
+    - jupyter.example.com
   tls:
     - hosts:
-      - jupyter-dev.srrain.kro.kr
+      - jupyter.example.com
       secretName: tls-secret
 
 proxy:
   chp:
     networkPolicy:
       enabled: false
-  secretToken: "184ae13d4e33c3c77aa66e1c27389d06a78dce9965a5d704d72488f8f2709799"
+  secretToken: "<JUPYTERHUB_SECRET_TOKEN>"
   https:
     hosts:
-      - jupyter-dev.srrain.kro.kr
+      - jupyter.example.com
     letsencrypt:
-      contactEmail: hub@srrain.kro.kr
+      contactEmail: jupyterhub@example.com
   service:
     type: ClusterIP
 cull:
@@ -269,8 +269,8 @@ gitlab admin area → applications 탭 접속
 ```makefile
 value에서 적은 oauth_callback_url과 동일한 URI 기재
 
-oauth_callback_url: https://jupyter-dev.srrain.kro.kr/hub/oauth_callback
-https://jupyter-dev.srrain.kro.kr/hub/oauth_callback
+oauth_callback_url: https://jupyter.example.com/hub/oauth_callback
+https://jupyter.example.com/hub/oauth_callback
 ```
 
 #무효 값
@@ -462,14 +462,14 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN pip install poetry --no-cache-dir && \
     poetry config virtualenvs.create false && \
-    git clone https://token:glpat-hrhTLjcccSR7L_3XSk8Y@gitlab.srrain.kro.kr/srrain98/langchain.git && \
+    git clone https://gitlab.example.com/org/langchain.git && \
     cd langchain && \
     chown ${NB_USER}:${NB_USER} . -R && \
     poetry install --no-interaction --no-ansi --only main || true
 
 RUN python3 -m pip install --no-cache-dir \
-    git+https://token:glpat-hrhTLjcccSR7L_3XSk8Y@gitlab.srrain.kro.kr/srrain98/hcxai-main.git
-#    git+https://token:glpat-hrhTLjcccSR7L_3XSk8Y@gitlab.srrain.kro.kr/srrain98/langchain.git
+    git+https://gitlab.example.com/org/hcxai-main.git
+#    git+https://gitlab.example.com/org/langchain.git
 
 # install wheels built in the build-stage
 COPY requirements.txt /tmp/requirements.txt
@@ -538,14 +538,14 @@ USER ${NB_USER}
 #langchain
 RUN pip install poetry --no-cache-dir && \
     poetry config virtualenvs.create false && \
-    git clone https://token:glpat-hrhTLjcccSR7L_3XSk8Y@gitlab.srrain.kro.kr/srrain98/langchain.git && \
+    git clone https://gitlab.example.com/org/langchain.git && \
     cd langchain && \
     chown ${NB_USER} . -R && \
     poetry install --no-interaction --no-ansi --only main || true
 
 #hcx
 RUN python3 -m pip install --no-cache-dir \
-    git+https://token:glpat-hrhTLjcccSR7L_3XSk8Y@gitlab.srrain.kro.kr/srrain98/hcxai-main.git
+    git+https://gitlab.example.com/org/hcxai-main.git
 
 USER root
 

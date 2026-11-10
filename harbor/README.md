@@ -32,10 +32,10 @@ expose:
 
 ingress:
   hosts:
-    core: core.harbor.srrain.kro.kr
-    notary: notary.harbor.srrain.kro.kr
+    core: core.harbor.example.com
+    notary: notary.harbor.example.com
 
-externalURL: https://core.harbor.srrain.kro.kr
+externalURL: https://core.harbor.example.com
 ```
 
 #공인 인증서 등록 확인에 걸리는 시간 1분 이상 소요될 수 있음
@@ -49,15 +49,15 @@ q1w2e3r4!@#$
 “spring” 이름으로 프로젝트를 생성 했을 시
 
 ```bash
-docker tag image:[TAG] 20.41.114.112/spring/image:[TAG]
-docker push 20.41.114.112/spring/image:[TAG]
+docker tag image:[TAG] 198.51.100.10/spring/image:[TAG]
+docker push 198.51.100.10/spring/image:[TAG]
 ```
 
 ex)
 
 ```bash
-docker tag nginx:0.1 20.41.114.112/spring/nginx:0.1
-docker push 20.41.114.112/spring/nginx:0.1
+docker tag nginx:0.1 198.51.100.10/spring/nginx:0.1
+docker push 198.51.100.10/spring/nginx:0.1
 ```
 
 이와 같이 이미지를 넣을 수 있다

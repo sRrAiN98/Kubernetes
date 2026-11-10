@@ -62,7 +62,7 @@ make install # may need sudo
 
 ## sql 접속
 
-psql -U postgres -h postgre.srrain.kro.kr
+psql -U postgres -h postgres.example.com
   password 입력: tWfzfpekd1
 
 # 확장기능 활성화
@@ -106,15 +106,15 @@ RUN chown -R 1000:1000 /bitnami
 ```
 
 ```bash
-docker build -t docker-image.kr.ncr.ntruss.com/postgres-pgvector:1 .
-docker push docker-image.kr.ncr.ntruss.com/postgres-pgvector:1
+docker build -t cr.example.com/postgres-pgvector:1 .
+docker push cr.example.com/postgres-pgvector:1
 ```
 
 helm chart 옵션 변경(위에 유저 변경 제거 후 이미지만 변경)
 
 ```bash
 image:
-  registry: docker-image.kr.ncr.ntruss.com
+  registry: cr.example.com
   repository: postgres-pgvector 
   tag: 1
 

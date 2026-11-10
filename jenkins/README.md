@@ -102,6 +102,6 @@ jenkins container의 `ssh-keygen -t rsa` 명령어로 ssh키를 생성후
 
 이러한 과정을 통해 gitlab repo에 접근하여 소스를 pull 할 수 있다.
 
-[helm install](jenins_helm/README.md)
+[helm install](jenkins_helm/README.md)
 
 [jenkinsfile 모음](https://www.notion.so/jenkinsfile-5d8ed8522aab434bbe23f428745f93d4?pvs=21)

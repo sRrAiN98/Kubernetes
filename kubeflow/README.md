@@ -64,7 +64,7 @@
     ./deploykf/argocd-plugin/example-app-of-apps/app-of-apps.yaml 파일 수정
     deploykf_istio_gateway:
       gateway:
-        hostname: deploykf.srrain.kro.kr #도메인 설정 방법
+        hostname: deploykf.example.com #도메인 설정 방법
       ports:
         http: 80
         https: 443
@@ -88,7 +88,7 @@
         vim sync_argocd_apps.sh
         
         #내 도메인 입력
-        ARGOCD_SERVER_URL="argocd.srrain.kro.kr"
+        ARGOCD_SERVER_URL="argocd.example.com"
         #위에서 획득한 비밀번호 입력
         ARGOCD_PASSWORD=""
         
@@ -224,7 +224,7 @@ metadata:
   name: kubeflow-ingressgateway-certs
   namespace: istio-system
 spec:
-  commonName: DOMAIN_NAME #  Ex) kubeflow.srrain.kro.kr
+  commonName: DOMAIN_NAME #  Ex) kubeflow.example.com
   issuerRef:
     kind: ClusterIssuer
     name: kubeflow-self-signing-issuer # ClusterIssuer 이름 입력
@@ -245,7 +245,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: jhjang@srrain.kro.kr
+    email: admin@example.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -260,9 +260,9 @@ metadata:
   namespace: istio-system
 spec:
   secretName: kubeflow-ingressgateway-certs
-  commonName: kubeflow.srrain.kro.kr
+  commonName: kubeflow.example.com
   dnsNames:
-  - kubeflow.srrain.kro.kr
+  - kubeflow.example.com
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
@@ -446,10 +446,10 @@ http://digits-recognizer.kubeflow-user-example-com.svc.cluster.local/v1/models/d
 
 ```yaml
 #외부 접근 주소
-http://digits-recognizer.kubeflow-user-example-com.srrain.kro.kr/v1/models/digits-recognizer:predict
+http://digits-recognizer.kubeflow-user-example-com.example.com/v1/models/digits-recognizer:predict
 
 #---세션 쿠키 얻는 코드 --- #
-HOST = "https://kubeflow.srrain.kro.kr"  # Central Dashboard 접근 주소 (포트 포함)
+HOST = "https://kubeflow.example.com"  # Central Dashboard 접근 주소 (포트 포함)
 USERNAME = "user@example.com"
 PASSWORD = "12341234"
 
@@ -569,7 +569,7 @@ kubectl edit cm config-domain -n knative-serving
 ```yaml
 
 #InferenceService에서 생성할 때 붙는 도메인 정의하기
-  srrain.kro.kr: ""
+  example.com: ""
 ```
 
 생성될 도메인 규칙 관리

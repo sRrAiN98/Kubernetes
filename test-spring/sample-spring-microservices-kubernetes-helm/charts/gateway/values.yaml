@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: dockerimage.kr.ncr.ntruss.com/gateway
+  repository: cr.example.com/gateway
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ac079ea4-87
@@ -51,7 +51,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     #- host: microservices.info
-    - host: spring2.srrain98.kro.kr
+    - host: spring2.example.com
       paths:
         - path: /
           pathType: Prefix

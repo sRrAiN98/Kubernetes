@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: dockerimage.kr.ncr.ntruss.com/employee
+  repository: cr.example.com/employee
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: 1d51e723-83
@@ -49,7 +49,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: spring3.srrain98.kro.kr
+    - host: spring3.example.com
       paths:
         - path: /
           pathType: ImplementationSpecific
