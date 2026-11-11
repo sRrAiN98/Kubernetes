@@ -1,10 +1,18 @@
-기본 설치 가이드 문서: https://milvus.io/docs/install_cluster-milvusoperator.md
+# Milvus 분산 벡터 데이터베이스 구축 및 운영 가이드
 
-EKS 설치 문서(S3 사용): https://milvus.io/docs/eks.md
+대규모 AI 임베딩 벡터 검색 및 시맨틱 서치를 위한 **Milvus 분산 클러스터(Etcd, Pulsar, S3/MinIO 백엔드)**와 **Attu 웹 관리 콘솔**을 Kubernetes 환경에서 Helm과 ArgoCD로 구축하고 운영하는 실무 가이드입니다.
 
-Milvus DB Helm 설치
+---
 
-cluster 모드로 설치하기
+## 1. 사전 공식 참고 문서
+* 공식 설치 가이드: https://milvus.io/docs/install_cluster-milvusoperator.md
+* EKS/S3 연동 가이드: https://milvus.io/docs/eks.md
+
+---
+
+## 2. Milvus Cluster Helm 배포 (custom.yaml)
+
+클러스터 분산 모드로 배포 시의 설정 매니페스트입니다:
 
 ```bash
 cat << EOF > custom.yaml

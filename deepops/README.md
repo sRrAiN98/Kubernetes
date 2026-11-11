@@ -1,3 +1,11 @@
+# NVIDIA DeepOps GPU 클러스터 및 HPC 인프라 프로비저닝 가이드
+
+대규모 GPU 클러스터 및 HPC(고성능 컴퓨팅) 워크로드를 위한 **NVIDIA DeepOps** 배포 사전 환경 설정(CentOS 패키지, 저장소, 방화벽, Slurm/K8s 노드 설정) 가이드입니다.
+
+---
+
+## 1. 노드 공통 사전 OS 환경 설정
+
 ```bash
 sudo su
 

@@ -1,12 +1,23 @@
-# jupyterhub
-설치
+# JupyterHub on Kubernetes (Zero to JupyterHub) 배포 및 GitLab OAuth 연동 가이드
 
-```jsx
+Kubernetes 클러스터 환경에서 **JupyterHub(Zero to JupyterHub)**를 Helm으로 구축하고, 사용자별 리소스 프로파일(CPU/메모리 보장), 유휴 커널 자동 정리(Culling), GitLab OAuth2 SSO 인증 연동, 커스텀 Docker 이미지 빌드 및 VS Code 연동 팁을 정리한 실무 가이드입니다.
+
+---
+
+## 1. Helm Repository 등록 및 설치
+
+`ash
 helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
-helm install my-jupyterhub jupyterhub/jupyterhub --version 3.2.2-0.dev.git.6456.hf11f8ea8
-```
+helm repo update
 
-기본적인 config
+# 기본 설치 명령어
+helm install my-jupyterhub jupyterhub/jupyterhub --version 3.2.2-0.dev.git.6456.hf11f8ea8
+`
+
+---
+
+## 2. 기본 alues.yaml 설정 (유저 프로파일 및 유휴 파드 Culling)
+
 
 ```yaml
 imagePullSecrets: 

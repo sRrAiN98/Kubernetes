@@ -1,6 +1,6 @@
-# kubeflow
+# Kubeflow & DeployKF 엔드투엔드 MLOps 플랫폼 구축 가이드
 
-# 설치
+## 1. 사전 요구사항 및 Kustomize 설치
 
 노드의 최소 사양은 8코어 8기가가 필요함
 

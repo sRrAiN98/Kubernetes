@@ -1,4 +1,6 @@
-# 구조
+# Spring Cloud 마이크로서비스(MSA) Kubernetes 배포 및 Helm 차트화 가이드
+
+## 1. 마이크로서비스 아키텍처 구조
 ```mermaid
 graph TD
 

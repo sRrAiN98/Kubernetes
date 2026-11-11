@@ -1,102 +1,87 @@
-# Blue Green 배포
+# Argo Rollouts 무중단 배포 가이드 (Blue/Green & Canary)
 
-argoCD의 플러그인 기능으로 Rollout 솔루션을 배포하면
-
-argo의 blue green과 canary 배포를 사용할 수 있습니다.
-
-쿠버네티스의 기본 기능으로는 deployment를 2개 띄운 후 
-
-service에서 seleteor를 번갈아 지정하는 방식으로 blue green 배포를 만들 수 있습니다.
-
-helm chart 확인
-
-![alt text](argocd-Rollout_img/image.png)
-
-repo 등록
-
-![alt text](argocd-Rollout_img/image-1.png)
-
-app 생성
-
-![alt text](argocd-Rollout_img/image-2.png)
-
-![alt text](argocd-Rollout_img/image-3.png)
-
-value 오버라이드
-
-![alt text](argocd-Rollout_img/image-4.png)
+ArgoCD 환경에서 **Argo Rollouts** 컨트롤러를 도입하여, 기본 Kubernetes Deployment의 롤링 업데이트 한계를 넘어 **블루/그린(Blue-Green)** 및 **카나리(Canary)** 무중단 배포를 구성하고 수동 승인(Promote)과 Istio 트래픽 제어를 연동하는 실무 가이드입니다.
 
 ---
 
-배포 확인
+## 1. Blue-Green 배포 원리
 
-![alt text](argocd-Rollout_img/image-5.png)
+* **쿠버네티스 기본 기능으로 구성할 경우**:
+  * Deployment를 2개 띄워 두고, Service의 `selector` 라벨을 수동으로 번갈아 수정해야 하므로 관리가 번거롭고 실수 위험이 있습니다.
+* **Argo Rollouts 도입 시**:
+  * `Rollout` CRD를 사용하여 `activeService`와 `previewService`를 지정하면, 새 버전(Green)을 띄워 사전 검증을 마친 후 클릭 한 번으로 무중단 트래픽 전환(Switch) 및 구버전 파드 자동 정리까지 자동으로 제어할 수 있습니다.
 
-rollout CRD가 생성되었으므로  Deployment Rollouts로 변경합니다.
+---
 
-```bash
+## 2. Argo Rollouts 컨트롤러 배포 (ArgoCD)
+
+공식 Argo Rollouts Helm 차트를 ArgoCD에 등록하여 배포합니다.
+
+![Argo Rollouts Helm 정보](argocd-Rollout_img/image.png)
+![ArgoCD Repo 등록](argocd-Rollout_img/image-1.png)
+![ArgoCD App 생성](argocd-Rollout_img/image-2.png)
+![App 세부 설정](argocd-Rollout_img/image-3.png)
+![Values 오버라이드](argocd-Rollout_img/image-4.png)
+![Rollouts 컨트롤러 배포 확인](argocd-Rollout_img/image-5.png)
+
+---
+
+## 3. Deployment → Rollout 리소스 전환
+
+기존 `Deployment` 매니페스트의 `apiVersion`과 `kind`를 변경하고, `strategy` 필드에 블루/그린 설정을 추가합니다.
+
+### 1) Kind 변경
+```yaml
+# 기존
 apiVersion: apps/v1
 kind: Deployment
-```
 
-![alt text](argocd-Rollout_img/image-6.png)
-
-→
-
-```bash
+# 변경 후
 apiVersion: argoproj.io/v1alpha1
-kind: Rollouts
+kind: Rollout
 ```
 
-![alt text](argocd-Rollout_img/image-7.png)
+![Deployment 매니페스트](argocd-Rollout_img/image-6.png)
+![Rollout 리소스 정의](argocd-Rollout_img/image-7.png)
 
-deployment 가장 아래에 strategy를 추가합니다.
-
-```bash
+### 2) Blue/Green 전략 정의
+```yaml
+spec:
+  replicas: 3
   strategy:
     blueGreen:
-      activeService: rollout-test-blue
-      autoPromotionEnabled: true
-      previewReplicaCount: 1
-      previewService: rollout-test-green
-      scaleDownDelaySeconds: 3600
+      activeService: rollout-test-blue       # 실제 운영 트래픽을 받는 Service
+      previewService: rollout-test-green     # 검증용 테스트 트래픽을 받는 Service
+      autoPromotionEnabled: false            # 관리자 수동 승인 후 전환할지 여부
+      previewReplicaCount: 1                 # 검증용 프리뷰 파드 개수
+      scaleDownDelaySeconds: 3600            # 승인 후 구버전(Blue) 파드를 삭제할 때까지 대기 시간 (1시간)
 ```
 
-![alt text](argocd-Rollout_img/image-8.png)
+![Rollout 전략 설정](argocd-Rollout_img/image-8.png)
 
-```bash
-activeService: 
-  실 service의 selector로 지정될 이름
-previewService: 
-  테스트 service의 selector로 지정될 이름
+> [!NOTE]
+> **Service 구성 주의사항**:
+> Blue/Green 배포 시에는 운영 트래픽용 `activeService`와 사전 검증용 `previewService` 등 **2개의 쿠버네티스 Service**가 반드시 미리 배포되어 있어야 합니다.
 
-autoPromotionEnabled: true
-  blue green 변환을 관리자가 승인해야하는지 여부
-previewReplicaCount: 1
-  테스트 pod의 갯수 (hpa가 동작하고 있으면 적용되지 않음)
-scaleDownDelaySeconds: 3600
-  green pod가 삭제되는 시간 (1시간 뒤에 삭제)
+![Active 및 Preview Service 목록](argocd-Rollout_img/image-9.png)
 
-blue green 배포시 deployment가 2개 동시에 뜨고
-관리자가 blue green 변경 승인 후
-green deployment는 1시간 뒤에 삭제됨
-```
+---
 
-green deployment가 내 외부로 트래픽을 전달하기 위해 쿠버네티스 Service가 2개가 필요합니다.
+## 4. Rollouts 대시보드를 통한 배포 승인 (Promote)
 
-![alt text](argocd-Rollout_img/image-9.png)
+`autoPromotionEnabled: false`로 설정되어 있으면, 새 버전 파드가 정상 기동된 후 대기 상태(Paused)로 머뭅니다.  
+Argo Rollouts 대시보드나 CLI에서 **Promote** 버튼을 클릭하면 실제 운영 트래픽이 새 버전으로 일괄 전환됩니다.
 
-Rollouts에서 제공하는 dashboard에서 autoPromotionEnabled: false일 때 
+![Argo Rollouts UI 대시보드 Promote 승인](argocd-Rollout_img/image-10.png)
 
-Promote로 승인할 수 있습니다.
+---
 
-![alt text](argocd-Rollout_img/image-10.png)
+## 5. Istio 연동 가중치 카나리 배포 (Canary 50:50 분할)
 
-istio의 VirtualService와 Destination Rule로 
+Istio의 Gateway 및 VirtualService와 연동하면 Blue와 Green 버전에 트래픽을 가중치(50:50 등)로 나누어 점진적으로 전환할 수 있습니다.
 
-Blue Green 양쪽에 트래픽을 50:50으로 나누거나 할 수 있습니다.
-
-```bash
+### `virtualservice.yaml`
+```yaml
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -117,8 +102,8 @@ spec:
           weight: 50
 ```
 
-gateway.yaml
-```bash
+### `gateway.yaml`
+```yaml
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -126,7 +111,7 @@ metadata:
   namespace: default
 spec:
   selector:
-    istio: istio-system/ingressgateway
+    istio: ingressgateway
   servers:
     - hosts:
         - '*'

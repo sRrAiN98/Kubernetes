@@ -1,6 +1,19 @@
-- 목차
+# NVIDIA GPU Operator 및 GPU 가속 쿠버네티스 구축 가이드
 
-# **kubenertes cenots7 install**
+CentOS 7 깡통 OS 환경부터 시작하여 Kubernetes 노드를 프로비저닝하고, **NVIDIA GPU Operator**를 통해 GPU 드라이버 컨테이너, 컨테이너 툴킷, Kubelet 디바이스 플러그인, GPU 모니터링을 자동화하는 실무 가이드입니다.
+
+---
+
+## 📑 목차 (Table of Contents)
+
+1. [CentOS 7 기본 OS 패키지 및 Kubernetes 환경 설정](#1-kubernetes-centos-7-기본-노드-설정)
+2. [컨테이너 런타임 및 kubeadm 클러스터 구축](#2-kubeadm-클러스터-구축)
+3. [NVIDIA GPU Operator Helm 배포](#3-nvidia-gpu-operator-배포)
+4. [GPU 리소스 할당 검증 및 KubeSphere 모니터링 연동](#4-gpu-할당-검증-및-모니터링)
+
+---
+
+## 1. Kubernetes CentOS 7 기본 노드 설정
 
 ```bash
 # 깡통 os에 필요한 기본 설치

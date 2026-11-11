@@ -1,20 +1,52 @@
-## 문서 개선
-기존 appofapp 폴더에서는 애플리케이션에 대한 값을 다른 클러스터 변수로 설정할 시 에러가 발생하였습니다.  
-때문에 다른 차트를 참조하여 ver 2를 구성하였습니다.
+# ArgoCD App of Apps 배포 패턴 v2 (고도화 템플릿)
 
-### 구성 방식
-- 루트/apps에서 ArgoCD 템플릿 변수를 관리합니다.
-- 루트/helm-chart에서 실제로 배포할 차트를 관리합니다.
-  
- ### 배포 방식
-- /apps/templates에서 ArgoCD applications을 배포합니다.
-- /helm-chart에서 실제 차트를 배포합니다.
-  
-### apps/values.yaml의 변경 사항
-- apps: 부분은 원래 range 함수를 사용하여 동일한 네임스페이스,  
-  동일한 클러스터에 배포하도록 구성되어 있었습니다.
-  
-- 하지만, 각 차트마다 네임스페이스를 달리 구성하게 되어서  
-  range 템플릿을 제거하고 하나의 파일로 구성하였습니다.
-  
-- 해당 파일은 templates.yaml에 주석 처리하였습니다.
+기존 v1 버전에서 발생하던 클러스터 변수 주입 한계와 네임스페이스 강제 문제를 개선하여, **서비스별 독립 네임스페이스 지정 및 동적 템플릿 제어**가 가능하도록 개선한 **App of Apps 패턴(v2)** 가이드입니다.
+
+---
+
+## 1. v1 대비 주요 개선 사항
+
+* **독립적인 네임스페이스 지원**:
+  * 기존 v1에서는 `range` 루프를 사용해 모든 차트를 동일한 네임스페이스/클러스터에 일괄 배포하도록 되어 있었습니다.
+  * v2에서는 각 차트(예: Django 웹, AI 봇/API, NGINX 프록시)마다 목적에 맞게 서로 다른 네임스페이스(`web`, `ai` 등)로 분기 배포할 수 있도록 개별 템플릿 구조로 분리했습니다.
+* **유연한 템플릿 변수 관리**:
+  * 루트 `/apps`에서 ArgoCD Application 레벨의 소스 저장소, 브랜치, 대상 클러스터 변수를 중앙에서 관리합니다.
+  * 실제 각 서비스 차트(`django`, `file2text`, `hcxapi`, `hcxbot`, `nginx-django`)는 독립된 서브차트로 유지됩니다.
+
+---
+
+## 2. 디렉터리 구성 및 배포 흐름
+
+```
+[ application.yaml ] (최상위 루트 ArgoCD Application)
+         │
+         ▼
+     [ apps/ ]        (ArgoCD Applications 템플릿)
+   ├── templates/
+   │   ├── django.yaml
+   │   ├── file2text.yaml
+   │   ├── hcxapi.yaml
+   │   ├── hcxbot.yaml
+   │   └── nginx-django.yaml
+   └── values.yaml    (중앙 배포 변수 관리)
+         │
+         ▼
+[ 각 서비스 Helm 차트 ]
+   ├── django/
+   ├── file2text/
+   ├── hcxapi/
+   ├── hcxbot/
+   └── nginx-django/
+```
+
+---
+
+## 3. 배포 실행 절차
+
+```bash
+# 1. 최상위 부트스트랩 Application 적용
+kubectl apply -f application.yaml
+
+# 2. ArgoCD 콘솔에서 각 하위 애플리케이션(django, hcxbot 등)이 
+#    각자의 목적지 네임스페이스로 자동 프로비저닝되는지 확인
+```

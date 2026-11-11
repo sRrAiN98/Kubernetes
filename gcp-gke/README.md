@@ -1,4 +1,4 @@
-# GCP 쿠버네티스
+# GCP GKE 클러스터 및 VPC 인프라 프로비저닝 가이드 (Terraform)
 
 ---
 
@@ -14,7 +14,7 @@
     
     테라폼의 버전과 프로바이더가 뭔지 정의하는 기본 파일
     
-    ```yaml
+    ```hcl
     terraform {
       required_providers {
         google = {
@@ -125,7 +125,7 @@
     
     사용되는 변수를 정의하는 파일
     
-    ```yaml
+    ```hcl
     variable "project_id" {
       description = "project id"
     }
@@ -164,7 +164,7 @@
     
     terraform plan이나 apply끝나고 나오는 출력 정의
     
-    ```yaml
+    ```hcl
     output "region" {
       value       = var.region
       description = "GCloud Region"

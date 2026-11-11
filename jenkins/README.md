@@ -1,107 +1,85 @@
-# jenkins
+# Jenkins CI/CD 구축 및 GitLab 연동 가이드
 
-docker run -d —priviliged -p 8181:8080 -v /jenkins:/var/jenkins_home --name jenkins -u root jenkins/jenkins
+컨테이너 및 Kubernetes 환경에서 **Jenkins**를 운영하고, GitLab 레포지토리와 SSH Key / Personal Access Token을 통해 안전하게 연동하여 파이프라인(Pipeline) 빌드를 실행하는 실무 가이드입니다.
 
-젠킨스 접속 시 왼쪽에 젠킨스 관리에 들어가 시스템 설정 탭에 진입한다
+---
 
-![Untitled](jenkins_img/Untitled.png)
+## 1. Jenkins 실행 방식
 
-![Untitled](jenkins_img/Untitled%201.png)
+### 빠른 로컬 컨테이너 실행
+```bash
+docker run -d --privileged -p 8080:8080 -p 50000:50000 \
+  -v /jenkins:/var/jenkins_home \
+  --name jenkins -u root jenkins/jenkins:lts
+```
 
-2개의 Credentials가 필수적으로 필요하다.
+* **Kubernetes Helm 기반 배포**: 클러스터 내 영구 볼륨(PV) 및 ServiceAccount를 구성하여 운영하려면 **[`jenkins_helm/README.md`](jenkins_helm/README.md)** 문서를 참고하세요.
 
-![제목 없음.png](jenkins_img/제목_없음.png)
+---
 
-1. gitlab 접근 토큰 
-    1. 시스템 설정에서 gitlab 접근 값으로 사용
-2. jenkins - gitlab 연동 ssh키 등록              
-    1. jenkinsfile에서 credential id값으로 사용
+## 2. 필수 Credentials 구성 (GitLab 연동)
 
-(3). gitlab repo 접근 토큰    
+Jenkins에서 GitLab 저장소의 소스코드를 안전하게 가져오려면 아래 2가지 Credentials 등록이 필수입니다:
 
-1. jenkins 프로젝트 생성시 repo 접근 값으로 사용
+1. **GitLab API Access Token**:
+   * Jenkins 시스템 설정에서 GitLab 서버 상태 확인 및 웹훅(Webhook) 통신에 사용
+2. **Jenkins - GitLab SSH Key 쌍**:
+   * Git 소스코드 Clone 시 사용 (`Jenkinsfile` 내 `credentialsId`로 참조)
 
-(4). http로 repo에 접근할 때 gitlab id and pw
+![Jenkins 관리 및 시스템 설정](jenkins_img/Untitled.png)
+![시스템 설정 탭](jenkins_img/Untitled%201.png)
+![Credentials 등록 항목](jenkins_img/제목_없음.png)
 
-1. 시스템 설정 탭 안에 gitlab 설정 항목이 있는데 내부 gitlab의 url(도메인 혹은 IP)을 등록한다.
+---
 
-Credentials Add를 눌러 gitlab token을 등록한다.
+## 3. GitLab Personal Access Token 발급 및 등록
 
-![Untitled](jenkins_img/Untitled%202.png)
+1. GitLab 로그인 → **User Settings → Access Tokens** 메뉴로 이동합니다.
+2. 토큰 이름과 유효기간, 필요한 권한(`api`, `read_repository`)을 선택 후 발급합니다.
+3. 발급된 토큰 값은 재확인이 불가능하므로 복사해 둡니다.
 
-gitlab에 로그인 후 Edit profile탭에 들어간다.
+![GitLab Access Tokens 메뉴](jenkins_img/Untitled%203.png)
+![토큰 생성 화면](jenkins_img/Untitled%204.png)
+![토큰 발급 완료](jenkins_img/Untitled%205.png)
 
-![Untitled](jenkins_img/Untitled%203.png)
+4. **Jenkins 관리 → Credentials**에서 `GitLab API token` 타입으로 발급받은 토큰을 등록합니다.
 
-왼쪽 탭에 Access Tokens에 들어간다.
+![Jenkins Credentials에 토큰 등록](jenkins_img/Untitled%206.png)
+![저장 완료](jenkins_img/Untitled%207.png)
 
-![Untitled](jenkins_img/Untitled%204.png)
+---
 
-토큰의 이름과 유효기간과 권한을 설정후 발급한다.
+## 4. SSH Key 등록을 통한 Git Clone 인증
 
-![Untitled](jenkins_img/Untitled%205.png)
+1. Jenkins 컨테이너 내부(또는 호스트)에서 SSH 키를 생성합니다.
+   ```bash
+   ssh-keygen -t rsa -b 2048 -C "jenkins@example.com"
+   ```
+2. 공개 키(`cat ~/.ssh/id_rsa.pub`) 내용을 복사하여 GitLab의 **User Settings → SSH Keys**에 등록합니다.
 
-페이지 상단에 토큰 값이 나오는데 이는 다시 볼 수 없음으로 잘 보관 혹은 바로 등록한다.
+![GitLab SSH Key 등록](jenkins_img/Untitled%2014.png)
 
-![Untitled](jenkins_img/Untitled%206.png)
+3. 개인 키(`cat ~/.ssh/id_rsa`) 전체 내용을 복사하여 Jenkins Credentials에서 `SSH Username with private key` 타입으로 등록합니다.
 
-Credentials에 토큰 값을 입력하고 저장한다.
+![Jenkins SSH 개인키 등록](jenkins_img/Untitled%2015.png)
 
-![Untitled](jenkins_img/Untitled%207.png)
+---
 
-새로운 Item을 눌러 빌드할 환경을 만들 수 있다.
+## 5. 파이프라인(Pipeline) 프로젝트 생성 및 빌드
 
-![Untitled](jenkins_img/Untitled%208.png)
+1. Jenkins 홈에서 **새로운 Item**을 클릭하고 **Pipeline** 타입을 선택합니다.
 
-Pipeline으로 생성할 수 있다.
+![새로운 Item 생성](jenkins_img/Untitled%208.png)
+![Pipeline 타입 선택](jenkins_img/Untitled%209.png)
 
-![Untitled](jenkins_img/Untitled%209.png)
+2. 파이프라인 정의 섹션에서 **Pipeline script from SCM**을 선택하고 SCM을 **Git**으로 지정합니다.
+3. GitLab 저장소의 SSH Clone URL(`git@...`)을 입력하고, 위에서 등록한 SSH Credentials를 선택합니다.
 
-시스템 설정에서 등록한 gitlab과 연결할 수 있다.
+![Git 저장소 및 Credentials 지정](jenkins_img/Untitled%2011.png)
+![인증 완료 상태](jenkins_img/Untitled%2012.png)
 
-![Untitled](jenkins_img/Untitled%2010.png)
+4. 레포지토리 내 `Jenkinsfile`의 경로(루트에 위치할 경우 `Jenkinsfile`)를 지정하고 저장합니다.
 
-아래 항목에 gitlab 저장소의 url을 가져오고 Credentials로 인증한다.
+![Jenkinsfile 경로 설정](jenkins_img/Untitled%2013.png)
 
-![Untitled](jenkins_img/Untitled%2011.png)
-
-위 케이스는 이미지는 user and password로 인증하여 접근하였다.
-
-프로젝트마다 토큰을 따로 발급하여 토큰으로 인증할 수 있다.
-
-![Untitled](jenkins_img/Untitled%2012.png)
-
-맨 아래에 gitlab 저장소 어디에 Jenkins script가 있는지 위치를 명시한다.
-최상위 루트 폴더에 존재하기에 파일 명만 명시
-
-![Untitled](jenkins_img/Untitled%2013.png)
-
-프로젝트 생성 완료후 build now를 눌러 빌드한다.
-
-1. ssh 키 등록
-
-유저 프로필 설정 왼쪽 탭에 SSH KEYS를 눌러 ssh를 등록한다.
-
-jenkins container의 `ssh-keygen -t rsa` 명령어로 ssh키를 생성후
-
-`cat ~/.ssh/id_rsa.pub` 명령어로 pub파일 내용을 gitlab에 등록한다.
-
-![Untitled](jenkins_img/Untitled%2014.png)
-
-`cat ~/.ssh/id_rsa`
-
-명령어로 나오는 모든 값을 jenkins설정의 Credentials 값에 등록한다.
-
-이후에 이 값은 jenkinsfile 내에 Credentials ID에 들어간다.
-
-![Untitled](jenkins_img/Untitled%2015.png)
-
-1. 젠킨스 프로젝트 생성 ssh로 접근 시 Credentials 값에 (2) or (4) 에서 생성한 키를 등록한다.
-
-![제목 없음1.png](jenkins_img/제목_없음1.png)
-
-이러한 과정을 통해 gitlab repo에 접근하여 소스를 pull 할 수 있다.
-
-[helm install](jenkins_helm/README.md)
-
-[jenkinsfile 모음](https://www.notion.so/jenkinsfile-5d8ed8522aab434bbe23f428745f93d4?pvs=21)
+5. **Build Now**를 클릭하여 파이프라인이 정상적으로 소스를 땡겨와 빌드하는지 확인합니다.
